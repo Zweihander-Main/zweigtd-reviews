@@ -2,6 +2,8 @@
 
 > WIP
 
+This is currently tightly coupled to [my config](https://github.com/Zweihander-Main/zweidoom) -- the plan is to make it a standalone package in the future.
+
 ## Available for Hire
 
 I'm available for freelance, contracts, and consulting both remotely and in the Hudson Valley, NY (USA) area. [Some more about me](https://www.zweisolutions.com/about.html) and [what I can do for you](https://www.zweisolutions.com/services.html).
