@@ -7,6 +7,7 @@
 
 (depends-on "org")
 (depends-on "org-ql")
+(depends-on "zweigtd-goals" :git "https://github.com/zweihander-main/zweigtd-goals.git" :files ("zweigtd-goals.el"))
 
 (development
  (depends-on "f")
