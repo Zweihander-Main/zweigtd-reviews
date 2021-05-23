@@ -55,8 +55,7 @@ priority by yyyy-mm-dd
 Will return \"\" if goal is \"OTHER\"."
   (if (string= goal zweigtd-reviews-non-goals-string)
       ""
-    (let ((priority (substring-no-properties
-                     (zweigtd-goals-get-prop goal :priority)))
+    (let ((priority (zweigtd-goals-get-prop goal :priority))
           (schedule (zweigtd-goals-get-prop goal :schedule))
           (deadline (zweigtd-goals-get-prop goal :deadline)))
       (cond (deadline (concat priority
