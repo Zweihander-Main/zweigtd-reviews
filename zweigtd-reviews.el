@@ -267,7 +267,26 @@ To be used in org-capture-template as the template function."
   (org-capture-fill-template (org-file-contents
                               zweigtd-reviews-monthly-review-template)))
 
-(defun zweigtd-reviews--prompt-week-number ()
+(defun zweigtd-reviews--prompt-day ()
+  "Prompts user for day adjusted for `org-extend-today-until' and returns start/
+end ts cons cell. Defaults to using yesterday."
+  (let* ((input (ts-parse-org
+                 (org-read-date nil
+                                nil
+                                nil
+                                "Select review day --"
+                                (ts-internal (ts-adjust 'day -1 (ts-now))))))
+         (start (ts-apply :hour org-extend-today-until
+                          :minute 0
+                          :second 0
+                          input))
+         (end (ts-apply :hour (+ 24 org-extend-today-until)
+                        :minute 0
+                        :second 0
+                        input)))
+    (cons start end)))
+
+(defun zweigtd-reviews--prompt-week ()
   "Prompts user for ISO week (starts Mon) and returns start/end ts cons cell."
   (interactive)
   (let* ((now (ts-apply :hour org-extend-today-until
@@ -291,36 +310,20 @@ To be used in org-capture-template as the template function."
                   (cons iter-start iter-end))
             collection))
     (cdr (assoc (completing-read
-            "Select which week: "
-            (reverse collection)
-            nil
-            t
-            nil
-            nil
-            (nth 52 collection)) ; Default week just before this one
-           collection))
-    ;; NEXT: Get the cdr, throw it into abs-from-iso and grego-from-abs
-    ;; You will then have the week num (nth 0), and the start date in whatever format
-    ;; The datetree has a function for week, figure it out, figure out what it wants
-    ;; Then implement it, clean up reviews so it uses that
-    ;; Then port over the monthly code and generally copy that
-    ;; This function is just for prompt, copy the monthly one for the rest
-    ))
+                 "Select which week: "
+                 (reverse collection)
+                 nil
+                 t
+                 nil
+                 nil
+                 (nth 52 collection)) ; Default week just before this one
+                collection))))
 
 (defun zweigtd-goals--query-interval (interval)
   "Figure out which dates user wants over INTERVAL and return . If nil, will return already queried value. See `zweigtd-reviews-goal-' TODO"
   (pcase interval
-    ('day (let* ((input (ts-parse-org (org-read-date)))
-                 (start (ts-apply :hour org-extend-today-until
-                                  :minute 0
-                                  :second 0
-                                  input))
-                 (end (ts-apply :hour (+ 24 org-extend-today-until)
-                                :minute 0
-                                :second 0
-                                input)))
-            (cons (ts-format start) (ts-format end))))
-    ('week )
+    ('day (zweigtd-reviews--prompt-day))
+    ('week (zweigtd-reviews--prompt-week))
     ('month)
     ('quarter)
     ('year)
