@@ -59,6 +59,15 @@ List in (month day year) format.")
 (defvar zweigtd-reviews-non-goals-string "OTHER"
   "")
 
+(defcustom zweigtd-reviews-quarter-ends '("March 31"
+                                          "June 30"
+                                          "September 30"
+                                          "December 31")
+  "Ordered string list of 4 quarter end dates in Month Day format. Dates are
+inclusive for ranges."
+  :type (list 'string 'string 'string 'string)
+  :group 'zweigtd-reviews)
+
 (defcustom zweigtd-reviews-daily-review-template
   "* Daily Review --- %<%a, %D>
 ** Tasks tackled:
@@ -288,7 +297,6 @@ end ts cons cell. Defaults to using yesterday."
 
 (defun zweigtd-reviews--prompt-week ()
   "Prompts user for ISO week (starts Mon) and returns start/end ts cons cell."
-  (interactive)
   (let* ((now (ts-apply :hour org-extend-today-until
                         :minute 0
                         :second 0
@@ -319,14 +327,102 @@ end ts cons cell. Defaults to using yesterday."
                  (nth 52 collection)) ; Default week just before this one
                 collection))))
 
+(defun zweigtd-reviews--prompt-month ()
+  "Prompts user for month and returns start/end ts cons cell."
+  (let* ((input-list (calendar-read-date t))
+         (year (nth 2 input-list))
+         (month (nth 0 input-list))
+         (ts-start (ts-apply :hour org-extend-today-until
+                             :minute 0
+                             :second 0
+                             :month month
+                             :year year
+                             :day 1
+                             (ts-now)))
+         (ts-end (ts-adjust 'month +1 ts-start)))
+    (cons ts-start ts-end)))
+
+(defun zweigtd-reviews--get-quarter-range (quarter year)
+  "Get the ts cons cell range of QUARTER in YEAR."
+  (let* ((quarter-end-string (nth (1- quarter) zweigtd-reviews-quarter-ends))
+         (quarter-start-string (nth (if (= quarter 1) 3 (- quarter 2)) zweigtd-reviews-quarter-ends))
+         (q-end (ts-adjust
+                 'day +1
+                 (ts-apply :hour org-extend-today-until
+                           :minute 0
+                           :second 0
+                           :year year
+                           (ts-parse quarter-end-string))))
+         (q-start (ts-adjust
+                   'day +1
+                   (ts-apply :hour org-extend-today-until
+                             :minute 0
+                             :second 0
+                             :year (if (= quarter 1) (1- year) year)
+                             (ts-parse quarter-start-string)))))
+    (cons q-start q-end)
+    ))
+
+(defun zweigtd-reviews--prompt-quarter ()
+  "Prompts user for quarter and returns start/end ts cons cell."
+  (let* ((now (ts-apply :hour org-extend-today-until
+                        :minute 0
+                        :second 0
+                        (ts-fill (ts-now))))
+         (q-current (ceiling (/ (ts-doy now) 91.25))) ; approximation
+         (q-start (cond ((= q-current 2) 4)
+                        ((= q-current) 2)
+                        (t (- q-current 2))))
+         (year (- (ts-year (ts-now)) 2))
+         (collection '())
+         range)
+    (dotimes (i 12) ; 2 years back, 1 year forward
+      (setq q-start (if (= q-start 4) 1 (1+ q-start)))
+      (when (= q-start 1) (setq year (1+ year)))
+      (setq range (zweigtd-reviews--get-quarter-range q-start year))
+      (push (cons (concat (format "Q%d " q-start)
+                          (number-to-string year)
+                          " | "
+                          (ts-format "%d %b %Y - " (car range))
+                          (ts-format "%d %b %Y" ; -1 as it's midnight the next day
+                                     (ts-adjust 'day -1 (cdr range))))
+                  range)
+            collection))
+    (cdr (assoc (completing-read
+                 "Select which quarter: "
+                 (reverse collection)
+                 nil
+                 t
+                 nil
+                 nil
+                 (nth 3 collection)) ; Default quarter before this one
+                collection))))
+
+(defun zweigtd-reviews--prompt-year ()
+  "Prompts user for year and returns start/end ts cons cell."
+  (let* ((year (calendar-read
+                "Year (>0): "
+                (lambda (x) (> x 1900))
+                (number-to-string (calendar-extract-year
+                                   (calendar-current-date)))))
+         (ts-start (ts-apply :hour org-extend-today-until
+                             :minute 0
+                             :second 0
+                             :month 1
+                             :year year
+                             :day 1
+                             (ts-now)))
+         (ts-end (ts-adjust 'year +1 ts-start)))
+    (cons ts-start ts-end)))
+
 (defun zweigtd-goals--query-interval (interval)
   "Figure out which dates user wants over INTERVAL and return . If nil, will return already queried value. See `zweigtd-reviews-goal-' TODO"
   (pcase interval
     ('day (zweigtd-reviews--prompt-day))
     ('week (zweigtd-reviews--prompt-week))
-    ('month)
+    ('month (zweigtd-reviews--prompt-month))
     ('quarter)
-    ('year)
+    ('year (zweigtd-reviews--prompt-year))
     (_ zweigtd-reviews--current-working-date)))
 
 ;; TODO figure out org-jounral start weekday
