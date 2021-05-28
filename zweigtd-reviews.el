@@ -415,21 +415,20 @@ end ts cons cell. Defaults to using yesterday."
          (ts-end (ts-adjust 'year +1 ts-start)))
     (cons ts-start ts-end)))
 
-(defun zweigtd-goals--query-interval (interval)
+(defun zweigtd-reviews--query-interval (interval)
   "Figure out which dates user wants over INTERVAL and return . If nil, will return already queried value. See `zweigtd-reviews-goal-' TODO"
   (pcase interval
     ('day (zweigtd-reviews--prompt-day))
     ('week (zweigtd-reviews--prompt-week))
     ('month (zweigtd-reviews--prompt-month))
-    ('quarter)
+    ('quarter (zweigtd-reviews--prompt-quarter))
     ('year (zweigtd-reviews--prompt-year))
     (_ zweigtd-reviews--current-working-date)))
 
-;; TODO figure out org-jounral start weekday
 ;; TODO notes on org-extend-today-until
 
-(defun zweigtd-reviews-goal- (interval goal grouping headings num-completed priority)
-  "Returns string.
+(defun zweigtd-reviews-tasks-accomplished (interval goal grouping headings num-completed priority)
+  "Returns string of tasks accomplished, optionally broken out by goal.
 
 INTERVAL represents the time horizon being queried and can be one of the following:
   `day'
@@ -446,6 +445,7 @@ GOAL represents the data being queried and can be one of the following:
   `nogoal'     -- all tasks without a goal tag
   goal (str) -- goal string for one particular goal
 
+;; TODO break out grouping into its own function
 GROUPING represents how the data will be grouped and can be one of the following:
   `goal'    -- data grouped by goal
   `day'     -- data grouped by day
@@ -454,6 +454,7 @@ GROUPING represents how the data will be grouped and can be one of the following
   `quarter' -- data grouped by quarter
   `none'    -- all data is combined
 
+;; TODO should really be getting elements -- throw everything else into other functions, copy compli display
 HEADINGS will include the tasks/headlines closed if non-nil.
 
 NUM-COMPLETED will include the number of tasks/headlines closed if non-nil.
@@ -461,11 +462,40 @@ NUM-COMPLETED will include the number of tasks/headlines closed if non-nil.
 PRIORITY will include the current goal(s) priority if applicable and non-nil.
  "
   ;; Set org-ql predicate based on pcase
-  (let* ((queried-date (zweigtd-goals--query-interval interval))
-         (org-ql-date (zweigtd-goals--date-to-orgql-predicate queried-date)))
+  (let* ((queried-date (zweigtd-reviews--query-interval interval))
+         (org-ql-predicate `(:from ,(car queried-date) :to ,(cdr queried-date)))
+         (goal-match (pcase goal
+                       ('all+nogoal t)
+                       ('all `(tags ,@(zweigtd-goals-get-goals)))
+                       ('nogoal `(not (tags ,@(zweigtd-goals-get-goals))))
+                       (_ `(tags ,goal))))
+         (select (if num-completed 'element '(org-get-heading nil nil nil t)))
+         (elements (org-ql-query :from (org-agenda-files t t)
+                                 :select 'element
+                                 :where `(and (or (closed ,@org-ql-predicate)
+                                                  (clocked ,@org-ql-predicate))
+                                              ,goal-match))))
+
+
+
+    (with-current-buffer (switch-to-buffer (make-temp-name "testing-reviews")) (mapc (lambda (e)
+              (insert e)
+              (newline))
+            elements)
+      (debug))
     )
-  ;; Call org-ql
   )
+;; Weekly
+;; (org-ql-query
+;;               :from (org-agenda-files t t)
+;;               :where `(and (closed ,@orgql-date-predicate)
+;;                            ,match))
+
+;; (if (string= goal zweigtd-reviews-non-goals-string)
+;;    `(not (tags ,@(zweigtd-goals-get-goals))) ;; TODO potential bug
+;;  `(tags ,goal)))))
+
+;; Call org-ql
 
 ;;;###autoload
 (defun zweigtd-reviews-init () ; TODO: change to default init
