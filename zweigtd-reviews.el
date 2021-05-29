@@ -31,12 +31,12 @@
 ;;; Code:
 
 (require 'org)
-(require 'org-capture) ;; TODO: you sure?
+(require 'org-capture)
 (require 'org-agenda)
-;; (require 'ts)
-;; (require 'dash)
+(require 'ts)
+(require 'org-ql)
+(require 'dash)
 (require 'zweigtd-goals)
-;; (require 'org-ql) ;; TODO: elsa problems
 
 (eval-when-compile
   (defvar org-capture-templates)
@@ -259,7 +259,7 @@ To be used in org-capture-template as the position function."
   (setq zweigtd-reviews--current-working-date (calendar-read-date t))
   (let ((marker (org-find-olp
                  (cons
-                  (org-capture-expand-file zwei/org-agenda-reviews-file)
+                  (org-capture-expand-file zwei/org-agenda-reviews-file) ;; TODO reviews file
                   (list "Monthly Reviews")))))
     (set-buffer (marker-buffer marker))
     (widen)
@@ -560,6 +560,7 @@ DATA-TO-QUERY represents the data being queried and can be one of the following:
 
 ;; Local Variables:
 ;; coding: utf-8
+;; flycheck-disabled-checkers: 'emacs-lisp-elsa
 ;; End:
 
 ;;; zweigtd-reviews.el ends here
