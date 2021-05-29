@@ -3,9 +3,10 @@
 ;; Copyright (C) 2021, Zweihänder <zweidev@zweihander.me>
 ;;
 ;; Author: Zweihänder
-;; Keywords: org-mode
+;; Keywords: outlines
 ;; Homepage: https://github.com/Zweihander-Main/zweigtd-reviews
 ;; Version: 0.0.1
+;; Package-Requires: ((emacs "27.2"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -360,8 +361,7 @@ end ts cons cell. Defaults to using yesterday."
                              :second 0
                              :year (if (= quarter 1) (1- year) year)
                              (ts-parse quarter-start-string)))))
-    (cons q-start q-end)
-    ))
+    (cons q-start q-end)))
 
 (defun zweigtd-reviews--prompt-quarter ()
   "Prompts user for quarter and returns start/end ts cons cell."
@@ -500,25 +500,25 @@ DATA-TO-QUERY represents the data being queried and can be one of the following:
       ('quarter )
       ('none
        (let* ((data-to-query (if only-goals 'only-goals 'everything))
-              (tasks (zweigtd-reviews-tasks interval data-query))
+              (tasks (zweigtd-reviews-tasks interval data-to-query))
               (output ""))
          (unless no-headings
            (setq output
                  (concat output (zweigtd-reviews--tasks-to-string tasks))))
          (when num-completed
            (setq output
-                 (concat output "*DONE:* " (zweigtd-reviews--num-tasks))))))))
+                 (concat output "*DONE:* " (zweigtd-reviews--num-tasks tasks))))))))
 
-  (let* ((data-to-query (if only-goals 'only-goals 'everything))
-         (tasks (zweigtd-reviews-tasks interval data-to-query))
-         (output ""))
-    (unless no-headings
-      (setq output (concat output (zweigtd-reviews--tasks-to-string tasks))))
-    (when num-completed
-      (setq output (concat output "*DONE:* " (zweigtd-reviews--num-tasks))))
-    (when priority
-      (setq output (concat output "*FOCUS:* " (zweigtd-reviews--goal-to-todo-string goal))))
-    )
+  ;; (let* ((data-to-query (if only-goals 'only-goals 'everything))
+  ;;        (tasks (zweigtd-reviews-tasks interval data-to-query))
+  ;;        (output ""))
+  ;;   (unless no-headings
+  ;;     (setq output (concat output (zweigtd-reviews--tasks-to-string tasks))))
+  ;;   (when num-completed
+  ;;     (setq output (concat output "*DONE:* " (zweigtd-reviews--num-tasks tasks))))
+  ;;   (when priority
+  ;;     (setq output (concat output "*FOCUS:* " (zweigtd-reviews--goal-to-todo-string goal))))
+  ;;   )
 
 
   )
