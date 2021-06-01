@@ -278,8 +278,7 @@ To be used in org-capture-template as the template function."
                               zweigtd-reviews-monthly-review-template)))
 
 (defun zweigtd-reviews--prompt-day ()
-  "Prompts user for day adjusted for `org-extend-today-until' and returns start/
-end ts cons cell. Defaults to using yesterday."
+  "Prompts user for day and return start/end ts cons cell."
   (let* ((input (ts-parse-org
                  (org-read-date nil
                                 nil
@@ -297,7 +296,7 @@ end ts cons cell. Defaults to using yesterday."
     (cons start end)))
 
 (defun zweigtd-reviews--prompt-week ()
-  "Prompts user for ISO week (starts Mon) and returns start/end ts cons cell."
+  "Prompts user for ISO week (start Mon) and return start/end ts cons cell."
   (let* ((now (ts-apply :hour org-extend-today-until
                         :minute 0
                         :second 0
@@ -307,7 +306,7 @@ end ts cons cell. Defaults to using yesterday."
          (iter-start (ts-adjust 'day (* -7 53) start-of-week))
          (iter-end (ts-adjust 'day +7 iter-start))
          (collection '()))
-    (dotimes (i 104) ; 52 before, after
+    (dotimes (nil 104) ; 52 before, after
       (setq iter-start iter-end)
       (setq iter-end (ts-adjust 'day +7 iter-end))
       (push (cons (concat (format "W%02d" (ts-woy iter-start))
@@ -329,7 +328,7 @@ end ts cons cell. Defaults to using yesterday."
                 collection))))
 
 (defun zweigtd-reviews--prompt-month ()
-  "Prompts user for month and returns start/end ts cons cell."
+  "Prompts user for month and return start/end ts cons cell."
   (let* ((input-list (calendar-read-date t))
          (year (nth 2 input-list))
          (month (nth 0 input-list))
@@ -344,7 +343,7 @@ end ts cons cell. Defaults to using yesterday."
     (cons ts-start ts-end)))
 
 (defun zweigtd-reviews--get-quarter-range (quarter year)
-  "Get the ts cons cell range of QUARTER in YEAR."
+  "Get ts start/end cons of QUARTER of YEAR."
   (let* ((quarter-end-string (nth (1- quarter) zweigtd-reviews-quarter-ends))
          (quarter-start-string (nth (if (= quarter 1) 3 (- quarter 2)) zweigtd-reviews-quarter-ends))
          (q-end (ts-adjust
@@ -364,7 +363,7 @@ end ts cons cell. Defaults to using yesterday."
     (cons q-start q-end)))
 
 (defun zweigtd-reviews--prompt-quarter ()
-  "Prompts user for quarter and returns start/end ts cons cell."
+  "Prompts user for quarter and return start/end ts cons cell."
   (let* ((now (ts-apply :hour org-extend-today-until
                         :minute 0
                         :second 0
@@ -376,7 +375,7 @@ end ts cons cell. Defaults to using yesterday."
          (year (- (ts-year (ts-now)) 2))
          (collection '())
          range)
-    (dotimes (i 12) ; 2 years back, 1 year forward
+    (dotimes (nil 12) ; 2 years back, 1 year forward
       (setq q-start (if (= q-start 4) 1 (1+ q-start)))
       (when (= q-start 1) (setq year (1+ year)))
       (setq range (zweigtd-reviews--get-quarter-range q-start year))
@@ -399,7 +398,7 @@ end ts cons cell. Defaults to using yesterday."
                 collection))))
 
 (defun zweigtd-reviews--prompt-year ()
-  "Prompts user for year and returns start/end ts cons cell."
+  "Prompts user for year and return start/end ts cons cell."
   (let* ((year (calendar-read
                 "Year (>0): "
                 (lambda (x) (> x 1900))
