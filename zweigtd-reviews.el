@@ -415,37 +415,40 @@ To be used in org-capture-template as the template function."
     (cons ts-start ts-end)))
 
 (defun zweigtd-reviews--query-interval (interval)
-  "Figure out which dates user wants over INTERVAL and return . If nil, will return already queried value. See `zweigtd-reviews-goal-' TODO"
-  (pcase interval
-    ('day (zweigtd-reviews--prompt-day))
-    ('week (zweigtd-reviews--prompt-week))
-    ('month (zweigtd-reviews--prompt-month))
-    ('quarter (zweigtd-reviews--prompt-quarter))
-    ('year (zweigtd-reviews--prompt-year))
-    (_ zweigtd-reviews--current-working-date)))
+  "Figure out which dates user wants over INTERVAL and return TS-CONS cell.
+TS-CONS cell can be used for `zweigtd-reviews--get-tasks'.
 
-;; TODO notes on org-extend-today-until
-
-(defun zweigtd-reviews-tasks (interval data-to-query)
-  "Returns string of tasks accomplished, optionally broken out by goal.
-
-INTERVAL represents the time horizon being queried and can be one of the following:
+INTERVAL represents the horizon being queried and can be one of the following:
   `day'
   `week'
   `month'
   `quarter'
   `year'
-  nil  -- use already queried value; for example, use value from capture template
-generator function
+
+Returned time will take into account `org-extend-today-until' variable."
+  (pcase interval
+    ('day (zweigtd-reviews--prompt-day))
+    ('week (zweigtd-reviews--prompt-week))
+    ('month (zweigtd-reviews--prompt-month))
+    ('quarter (zweigtd-reviews--prompt-quarter))
+    ('year (zweigtd-reviews--prompt-year))))
+
+(defun zweigtd-reviews--get-tasks (ts-cons data-to-query)
+  "Return tasks accomplished DATA-TO-QUERY over TS-CONS interval.
+
+TS-CONS should be a cons cell with car set to the start of the date interval to
+query and cdr set to the end of the date interval. The values can be anything
+accepted by the `:from' and `:to' arguments fed into `org-ql' time predicates.
+This includes number of days (positive to look forward, negative to look
+backward), a `ts' struct (recommended), or a string parseable by
+`parse-time-string'.
 
 DATA-TO-QUERY represents the data being queried and can be one of the following:
   `only-goals' -- only tasks with a goal tag
   `everything' -- all tasks, even those without a goal tag
   `no-goals'   -- all tasks without a goal tag
-  goal (str) -- goal string for one particular goal
- "
-  (let* ((queried-date (zweigtd-reviews--query-interval interval))
-         (org-ql-predicate `(:from ,(car queried-date) :to ,(cdr queried-date)))
+  goal (str) -- goal string for one particular goal"
+  (let* ((org-ql-predicate `(:from ,(car ts-cons) :to ,(cdr ts-cons)))
          (goal-match (pcase data-to-query
                        ('everything t)
                        ('only-goals `(tags ,@(zweigtd-goals-get-goals)))
@@ -490,39 +493,37 @@ DATA-TO-QUERY represents the data being queried and can be one of the following:
 
 (defun zweigtd-reviews-review (interval grouping &optional num-completed priority only-goals no-headings)
   ""
-  (let ((output ""))
+  (let (output tasks)
     (pcase grouping
-      ('goal )
-      ('day )
-      ('week )
-      ('month )
-      ('quarter )
-      ('none
-       (let* ((data-to-query (if only-goals 'only-goals 'everything))
-              (tasks (zweigtd-reviews-tasks interval data-to-query))
-              (output ""))
+      ('goal
+       (progn
+         (mapc
+          (lambda (goal)
+            (-concat tasks (zweigtd-reviews-tasks interval goal)))
+          (zweigtd-goals-get-goals))
+         (unless only-goals
+           (push tasks (zweigtd-reviews-tasks interval 'no-goals)))
          (unless no-headings
            (setq output
                  (concat output (zweigtd-reviews--tasks-to-string tasks))))
          (when num-completed
            (setq output
-                 (concat output "*DONE:* " (zweigtd-reviews--num-tasks tasks))))))))
-
-  ;; (let* ((data-to-query (if only-goals 'only-goals 'everything))
-  ;;        (tasks (zweigtd-reviews-tasks interval data-to-query))
-  ;;        (output ""))
-  ;;   (unless no-headings
-  ;;     (setq output (concat output (zweigtd-reviews--tasks-to-string tasks))))
-  ;;   (when num-completed
-  ;;     (setq output (concat output "*DONE:* " (zweigtd-reviews--num-tasks tasks))))
-  ;;   (when priority
-  ;;     (setq output (concat output "*FOCUS:* " (zweigtd-reviews--goal-to-todo-string goal))))
-  ;;   )
-
-
-  )
-
-
+                 (concat output "*DONE:* " (zweigtd-reviews--num-tasks tasks))))))
+      ;; TODO: interval grouping requires refactoring
+      ;; ('day )
+      ;; ('week )
+      ;; ('month )
+      ;; ('quarter )
+      ('none
+       (let ((data-to-query (if only-goals 'only-goals 'everything)))
+         (setq tasks (zweigtd-reviews-tasks interval data-to-query))
+         (unless no-headings
+           (setq output
+                 (concat output (zweigtd-reviews--tasks-to-string tasks))))
+         (when num-completed
+           (setq output
+                 (concat output "*DONE:* " (zweigtd-reviews--num-tasks tasks)))))))
+    output))
 
 ;;;###autoload
 (defun zweigtd-reviews-init () ; TODO: change to default init
