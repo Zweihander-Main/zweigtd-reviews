@@ -34,6 +34,7 @@
 (require 'org)
 (require 'org-capture)
 (require 'org-agenda)
+(require 'org-element)
 (require 'ts)
 (require 'org-ql)
 (require 'dash)
@@ -461,48 +462,33 @@ DATA-TO-QUERY represents the data being queried and can be one of the following:
                                            ,goal-match))))
     tasks))
 
-
-;; ;; TODO break out grouping into its own function
-;; GROUPING represents how the data will be grouped and can be one of the following:
-;;   `goal'    -- data grouped by goal
-;;   `day'     -- data grouped by day
-;;   `week'    -- data grouped by week
-;;   `month'   -- data grouped by month
-;;   `quarter' -- data grouped by quarter
-;;   `none'    -- all data is combined
-
-;; ;; TODO should really be getting elements -- throw everything else into other functions, copy compli display
-;; HEADINGS will include the tasks/headlines closed if non-nil.
-
-;; NUM-COMPLETED will include the number of tasks/headlines closed if non-nil.
-
-;; PRIORITY will include the current goal(s) priority if applicable and non-nil.
-;;
 (defun zweigtd-reviews--num-tasks (tasks)
-  "ELEMENTS"
+  "Take org-element TASKS list and return number of tasks."
   ;; TODO should only be closed
   (length tasks))
 
 (defun zweigtd-reviews--tasks-to-string (tasks)
-  "ELEMENTS"
+  "Take org-element TASKS list and return string with each task on a newline."
   (let (str)
     (org-element-map tasks 'headline
       (lambda (task)
         (setq str (concat str (org-element-property :raw-value task) "\n"))))
     str))
 
-(defun zweigtd-reviews-review (interval grouping &optional num-completed priority only-goals no-headings)
+(defun zweigtd-reviews-genreview (interval grouping &optional num-completed priority only-goals no-headings)
   ""
-  (let (output tasks)
+  (let ((ts-cons (zweigtd-reviews--query-interval interval))
+        output tasks)
     (pcase grouping
       ('goal
        (progn
-         (mapc
-          (lambda (goal)
-            (-concat tasks (zweigtd-reviews-tasks interval goal)))
-          (zweigtd-goals-get-goals))
+         (setq tasks
+               (mapcar
+                (lambda (goal)
+                  (zweigtd-reviews--get-tasks ts-cons goal))
+                (zweigtd-goals-get-goals)))
          (unless only-goals
-           (push tasks (zweigtd-reviews-tasks interval 'no-goals)))
+           (setq tasks (-concat tasks (zweigtd-reviews--get-tasks ts-cons 'no-goals))))
          (unless no-headings
            (setq output
                  (concat output (zweigtd-reviews--tasks-to-string tasks))))
@@ -516,7 +502,7 @@ DATA-TO-QUERY represents the data being queried and can be one of the following:
       ;; ('quarter )
       ('none
        (let ((data-to-query (if only-goals 'only-goals 'everything)))
-         (setq tasks (zweigtd-reviews-tasks interval data-to-query))
+         (setq tasks (zweigtd-reviews--get-tasks ts-cons data-to-query))
          (unless no-headings
            (setq output
                  (concat output (zweigtd-reviews--tasks-to-string tasks))))
