@@ -197,6 +197,7 @@ agenda divided by goal."
   (let ((agenda-strings '()))
     (maphash
      (lambda (tag v)
+       (ignore tag)
        (let ((numkey (plist-get v 'numkey)))
          (push
           (save-window-excursion
@@ -308,6 +309,7 @@ To be used in org-capture-template as the template function."
          (iter-end (ts-adjust 'day +7 iter-start))
          (collection '()))
     (dotimes (i 104) ; 52 before, after
+      (ignore i)
       (setq iter-start iter-end)
       (setq iter-end (ts-adjust 'day +7 iter-end))
       (push (cons (concat (format "W%02d" (ts-woy iter-start))
@@ -376,7 +378,8 @@ To be used in org-capture-template as the template function."
          (year (- (ts-year (ts-now)) 2))
          (collection '())
          range)
-    (dotimes (nil 12) ; 2 years back, 1 year forward
+    (dotimes (i 12) ; 2 years back, 1 year forward
+      (ignore i)
       (setq q-start (if (= q-start 4) 1 (1+ q-start)))
       (when (= q-start 1) (setq year (1+ year)))
       (setq range (zweigtd-reviews--get-quarter-range q-start year))
@@ -476,28 +479,29 @@ DATA-TO-QUERY represents the data being queried and can be one of the following:
     str))
 
 (defun zweigtd-reviews--subdivide-interval (subdivisions ts-cons)
-  ""
+  "Return SUBDIVISIONS list of range TS-CONS.
+Important note: will return nil if the SUBDIVISIONS is larger than the range."
   (let* ((increment (pcase subdivisions
-                      ('day '('day +1))
-                      ('week '('day +7))
-                      ('month '('month +1))
-                      ('quarter '('month +3)) ;; TODO: not great
-                      ('year '('year +1))))
+                      ('day (cons 'day +1))
+                      ('week (cons 'day +7))
+                      ('month (cons 'month +1))
+                      ('quarter (cons 'month +3)) ;; TODO: quarter won't use user-specified variable
+                      ('year (cons 'year +1))))
          (start (car ts-cons))
          (end (cdr ts-cons))
          (prev start)
-         (curr (ts-adjust 'day +1 prev))
+         (curr (ts-adjust (car increment) (cdr increment) prev))
          (divs '()))
     (while (ts-in start end curr)
-      (push divs (cons prev curr))
+      (push (cons prev curr) divs)
       (setq prev curr)
-      (setq curr (ts-adjust 'day +1 curr))) ;; TODO/NEXT: this is giving me problems
+      (setq curr (ts-adjust (car increment) (cdr increment) curr)))
     (nreverse divs)))
 
 (defun zweigtd-reviews-genreview (interval grouping &optional num-completed priority only-goals no-headings)
   ""
   (let ((ts-cons (zweigtd-reviews--query-interval interval))
-        output tasks)
+        output tasks ts-groupings)
     (pcase grouping
       ('goal
        (progn
