@@ -307,7 +307,7 @@ To be used in org-capture-template as the template function."
          (iter-start (ts-adjust 'day (* -7 53) start-of-week))
          (iter-end (ts-adjust 'day +7 iter-start))
          (collection '()))
-    (dotimes (nil 104) ; 52 before, after
+    (dotimes (i 104) ; 52 before, after
       (setq iter-start iter-end)
       (setq iter-end (ts-adjust 'day +7 iter-end))
       (push (cons (concat (format "W%02d" (ts-woy iter-start))
@@ -475,6 +475,25 @@ DATA-TO-QUERY represents the data being queried and can be one of the following:
         (setq str (concat str (org-element-property :raw-value task) "\n"))))
     str))
 
+(defun zweigtd-reviews--subdivide-interval (subdivisions ts-cons)
+  ""
+  (let* ((increment (pcase subdivisions
+                      ('day '('day +1))
+                      ('week '('day +7))
+                      ('month '('month +1))
+                      ('quarter '('month +3)) ;; TODO: not great
+                      ('year '('year +1))))
+         (start (car ts-cons))
+         (end (cdr ts-cons))
+         (prev start)
+         (curr (ts-adjust 'day +1 prev))
+         (divs '()))
+    (while (ts-in start end curr)
+      (push divs (cons prev curr))
+      (setq prev curr)
+      (setq curr (ts-adjust 'day +1 curr))) ;; TODO/NEXT: this is giving me problems
+    (nreverse divs)))
+
 (defun zweigtd-reviews-genreview (interval grouping &optional num-completed priority only-goals no-headings)
   ""
   (let ((ts-cons (zweigtd-reviews--query-interval interval))
@@ -482,6 +501,24 @@ DATA-TO-QUERY represents the data being queried and can be one of the following:
     (pcase grouping
       ('goal
        (progn
+         (setq tasks
+               (mapcar
+                (lambda (goal)
+                  (zweigtd-reviews--get-tasks ts-cons goal))
+                ;; TODO goal headings
+                (zweigtd-goals-get-goals)))
+         (unless only-goals
+           (setq tasks (-concat tasks (zweigtd-reviews--get-tasks ts-cons 'no-goals))))
+         (unless no-headings
+           (setq output
+                 (concat output (zweigtd-reviews--tasks-to-string tasks))))
+         (when num-completed
+           (setq output
+                 (concat output "*DONE:* " (zweigtd-reviews--num-tasks tasks))))))
+      ('day
+       (progn
+         ;; Go through interval, divide by day, map over each day
+         (setq ts-groupings (zweigtd-reviews--subdivide-interval 'day ts-cons))
          (setq tasks
                (mapcar
                 (lambda (goal)
@@ -495,8 +532,7 @@ DATA-TO-QUERY represents the data being queried and can be one of the following:
          (when num-completed
            (setq output
                  (concat output "*DONE:* " (zweigtd-reviews--num-tasks tasks))))))
-      ;; TODO: interval grouping requires refactoring
-      ;; ('day )
+
       ;; ('week )
       ;; ('month )
       ;; ('quarter )
