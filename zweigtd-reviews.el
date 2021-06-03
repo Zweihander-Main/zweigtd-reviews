@@ -422,12 +422,7 @@ To be used in org-capture-template as the template function."
   "Figure out which dates user wants over INTERVAL and return TS-CONS cell.
 TS-CONS cell can be used for `zweigtd-reviews--get-tasks'.
 
-INTERVAL represents the horizon being queried and can be one of the following:
-  `day'
-  `week'
-  `month'
-  `quarter'
-  `year'
+INTERVAL represents the horizon being queried. See `zweigtd-reviews-genreview'.
 
 Returned time will take into account `org-extend-today-until' variable."
   (pcase interval
@@ -498,8 +493,34 @@ Important note: will return nil if the SUBDIVISIONS is larger than the range."
       (setq curr (ts-adjust (car increment) (cdr increment) curr)))
     (nreverse divs)))
 
+;;;###autoload
 (defun zweigtd-reviews-genreview (interval grouping &optional num-completed priority only-goals no-task-headings)
-  ""
+  "Generate review string for INTERVAL using GROUPING.
+
+INTERVAL represents the horizon being queried and can be one of the following:
+  `day'
+  `week'
+  `month'
+  `quarter'
+  `year'
+
+GROUPING decides how the data will be grouped and can be one of the following:
+  `goal'
+  `day'
+  `week'
+  `month'
+  `quarter'
+  `year'
+  `none'
+
+NUM-COMPLETED will print the amount of tasks closed per grouping below that
+grouping.
+
+PRIORITY will print the priority for a goal in that goal's grouping.
+
+ONLY-GOALS will only collect tasks that are the user defined goals.
+
+NO-TASK-HEADINGS will not print the actual tasks closed."
   (let* ((ts-cons (zweigtd-reviews--query-interval interval))
          (data-to-query (if only-goals 'only-goals 'everything))
          (task-groups
