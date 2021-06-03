@@ -88,9 +88,7 @@ Dates are inclusive for ranges."
 %(zweigtd-reviews-genreview 'day 'none nil nil nil nil nil)
 ** Thoughts:
 /Did you accomplish enough today?/
-- %?
-/Where did you waste time?/
--"
+- %^{Did you accomplish enough today?}"
   "Daily review template in `org-capture-templates' template format."
   :type 'string
   :group 'zweigtd-reviews)
@@ -128,18 +126,18 @@ Dates are inclusive for ranges."
 *** Misc Administration [0/1]
 - [ ] Get finances up to date
 ** Goal tracking %?
-%(zweigtd-reviews-gen-review 'day 'goal
+%(zweigtd-reviews-genreview 'week 'goal
    (concat
-    \"/What did you do that worked well?/\n-  \n\"
-    \"/What didn't work or got in the way?/\n-  \n\"
-    \"/Should you do anything differently?/\n-  \n\"
-    \"/What are your priorities for the upcoming week?/\n-  \n\")
+    \"/What did you do that worked well?/\n-  %^{What did you do that worked well?}\n\"
+    \"/What didn't work or got in the way?/\n-  %^{What didn't work or got in the way?}\n\"
+    \"/Should you do anything differently?/\n-  %^{Should you do anything differently?}\n\"
+    \"/What are your priorities for the upcoming week?/\n-  %^{What are you priorities for the upcoming week?}\n\")
 t t t nil)
 *** Overall
-/How are the goals coming along?/
--
+/How are your goals coming along?/
+- %^{How are your goals coming along}
 /How do you feel about the review?/
--"
+- %^{How do you feel about the review?}"
   "Weekly review template in `org-capture-templates' template format."
   :type 'string
   :group 'zweigtd-reviews)
@@ -147,12 +145,12 @@ t t t nil)
 (defcustom zweigtd-reviews-monthly-review-template
   "%(zweigtd-reviews-genreview 'month 'goal
   (concat
-    \"How are you doing relative to your plan for this goal?\n- \n\"
-    \"What do you need to do this month to make sure you're on track a month from now?\n- \n\")
+    \"How are you doing relative to your plan for this goal?\n- %^{How are you doing relative to your plan for this goal?}\n\"
+    \"What do you need to do this month to make sure you're on track a month from now?\n- %^{What do you need to do this month to make sure you're on track a month from now?}\n\")
 t t t nil)
 * Overall
 /How is your year going overall?/
--"
+- %^{How if your year going overall?}"
   "Monthly review template in `org-capture-templates' template format."
   :type 'string
   :group 'zweigtd-reviews)
@@ -477,6 +475,7 @@ NO-TASK-HEADINGS will not print the actual tasks closed."
   "Use this to bootstrap `org-capture' with a default set of reviews.
 Set the variable `zweigtd-reviews-bootstrap-key' to control the char key that is
 used to contain all the review entries."
+  ;; TODO doesn't keep it unique due to string interpolation
   (setq org-capture-templates
         (-uniq (-concat
                 org-capture-templates
@@ -501,6 +500,11 @@ used to contain all the review entries."
                    (function (lambda ()
                                (org-journal-new-entry nil)
                                (insert "Daily Review")))
+                   ;; TODO should be on the day specified
+                   ;; TODO inbox problem? maybe ok
+                   ;; TODO All the rest of the entry is based on the wrong day
+                   ;; TODO could probably color the individual headings
+                   ;; TODO if it's cancelled, the new entry is kept
                    ,zweigtd-reviews-daily-review-template
                    :jump-to-captured t
                    :immediate-finish nil))))))
