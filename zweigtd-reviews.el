@@ -498,57 +498,56 @@ Important note: will return nil if the SUBDIVISIONS is larger than the range."
       (setq curr (ts-adjust (car increment) (cdr increment) curr)))
     (nreverse divs)))
 
-(defun zweigtd-reviews-genreview (interval grouping &optional num-completed priority only-goals no-headings)
+(defun zweigtd-reviews-genreview (interval grouping &optional num-completed priority only-goals no-task-headings)
   ""
-  (let ((ts-cons (zweigtd-reviews--query-interval interval))
-        output tasks ts-groupings)
-    (pcase grouping
-      ('goal
-       (progn
-         (setq tasks
-               (mapcar
-                (lambda (goal)
-                  (zweigtd-reviews--get-tasks ts-cons goal))
-                ;; TODO goal headings
-                (zweigtd-goals-get-goals)))
-         (unless only-goals
-           (setq tasks (-concat tasks (zweigtd-reviews--get-tasks ts-cons 'no-goals))))
-         (unless no-headings
+  (let* ((ts-cons (zweigtd-reviews--query-interval interval))
+         (data-to-query (if only-goals 'only-goals 'everything))
+         (task-groups
+          (pcase grouping
+            ('goal (mapcar
+                    (lambda (goal)
+                      (cons (zweigtd-reviews--get-tasks ts-cons goal)
+                            goal))
+                    (-concat (zweigtd-goals-get-goals)
+                             (unless only-goals
+                               zweigtd-reviews-non-goals-string))))
+            ((or 'day 'week 'month 'quarter 'year)
+             (mapcar
+              (lambda (ts-grouping)
+                (cons (zweigtd-reviews--get-tasks ts-grouping data-to-query)
+                      (ts-format (car ts-grouping))))
+              (zweigtd-reviews--subdivide-interval grouping ts-cons)))
+            ('none
+             (list (cons (zweigtd-reviews--get-tasks ts-cons data-to-query)
+                         nil)))))
+         (output ""))
+    (mapc
+     (lambda (group)
+       (let* ((tasks (car group))
+              (task-headings (zweigtd-reviews--tasks-to-string tasks))
+              (tasks-completed (zweigtd-reviews--num-tasks tasks))
+              (heading (cdr group)))
+         (when heading
+           (setq output (concat output
+                                "_"
+                                heading
+                                "_\n")))
+         (unless no-task-headings
            (setq output
-                 (concat output (zweigtd-reviews--tasks-to-string tasks))))
-         (when num-completed
+                 (concat output task-headings)))
+         (when (and num-completed tasks-completed)
            (setq output
-                 (concat output "*DONE:* " (zweigtd-reviews--num-tasks tasks))))))
-      ('day
-       (progn
-         ;; Go through interval, divide by day, map over each day
-         (setq ts-groupings (zweigtd-reviews--subdivide-interval 'day ts-cons))
-         (setq tasks
-               (mapcar
-                (lambda (goal)
-                  (zweigtd-reviews--get-tasks ts-cons goal))
-                (zweigtd-goals-get-goals)))
-         (unless only-goals
-           (setq tasks (-concat tasks (zweigtd-reviews--get-tasks ts-cons 'no-goals))))
-         (unless no-headings
-           (setq output
-                 (concat output (zweigtd-reviews--tasks-to-string tasks))))
-         (when num-completed
-           (setq output
-                 (concat output "*DONE:* " (zweigtd-reviews--num-tasks tasks))))))
-
-      ;; ('week )
-      ;; ('month )
-      ;; ('quarter )
-      ('none
-       (let ((data-to-query (if only-goals 'only-goals 'everything)))
-         (setq tasks (zweigtd-reviews--get-tasks ts-cons data-to-query))
-         (unless no-headings
-           (setq output
-                 (concat output (zweigtd-reviews--tasks-to-string tasks))))
-         (when num-completed
-           (setq output
-                 (concat output "*DONE:* " (zweigtd-reviews--num-tasks tasks)))))))
+                 (concat output
+                         "*DONE:* "
+                         (number-to-string tasks-completed)
+                         "\n")))
+         (when (and priority (not (eq heading zweigtd-reviews-non-goals-string))
+                    (setq output
+                          (concat output
+                                  "*PRIORITY:* /"
+                                  (zweigtd-goals-get-prop heading :priority)
+                                  "/\n"))))))
+     task-groups)
     output))
 
 ;;;###autoload
