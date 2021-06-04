@@ -83,19 +83,22 @@ Dates are inclusive for ranges."
   :group 'zweigtd-reviews)
 
 (defcustom zweigtd-reviews-daily-review-template
-  "* Daily Review --- %<%a, %D>
+"* Daily Review --- %<%a, %D>
 ** Tasks tackled:
-%(zweigtd-reviews-genreview 'day 'none nil nil nil nil nil)
+%(zweigtd-reviews-genreview 'day 'none nil nil nil nil)
 ** Thoughts:
 /Did you accomplish enough today?/
-- %^{Did you accomplish enough today?}"
+- %^{Did you accomplish enough today?}
+/Where did you waste time?/
+- %^{Where did you waste time?}"
   "Daily review template in `org-capture-templates' template format.
-Can also point to file ending in .org which will be used as a template."
+Can also point to file ending in .org which will be used as a template.
+Templates should start with top level heading."
   :type 'string
   :group 'zweigtd-reviews)
 
 (defcustom zweigtd-reviews-weekly-review-template
-  "* Week %<%W, %G>
+"* Week %<%W, %G>
 ** Admin
 *** Loose Input [0/3]
 - [ ] Gather all scraps of paper, business cards, receipts, and
@@ -124,9 +127,7 @@ Can also point to file ending in .org which will be used as a template."
 *** Review Any Relevant Checklists [0/2]
 - [ ] Review my tickler list, add newly relevant projects to projects
 - [ ] Review projects list, remove irrelevant projects to tickler
-*** Misc Administration [0/1]
-- [ ] Get finances up to date
-** Goal tracking %?
+** Goal tracking
 %(zweigtd-reviews-genreview 'week 'goal
    (concat
     \"/What did you do that worked well?/\n-  %^{What did you do that worked well?}\n\"
@@ -134,30 +135,35 @@ Can also point to file ending in .org which will be used as a template."
     \"/Should you do anything differently?/\n-  %^{Should you do anything differently?}\n\"
     \"/What are your priorities for the upcoming week?/\n-  %^{What are you priorities for the upcoming week?}\n\")
 t t t nil)
-*** Overall
+** Overall
 /How are your goals coming along?/
 - %^{How are your goals coming along}
 /How do you feel about the review?/
 - %^{How do you feel about the review?}"
   "Weekly review template in `org-capture-templates' template format.
-Can also point to file ending in .org which will be used as a template."
+Can also point to file ending in .org which will be used as a template.
+Templates should start with top level heading."
   :type 'string
   :group 'zweigtd-reviews)
 
 (defcustom zweigtd-reviews-monthly-review-template
-  "%(zweigtd-reviews-genreview 'month 'goal
+"* %<%B, %G>
+** Goal Tracking
+%(zweigtd-reviews-genreview 'month 'goal
   (concat
     \"How are you doing relative to your plan for this goal?\n- %^{How are you doing relative to your plan for this goal?}\n\"
     \"What do you need to do this month to make sure you're on track a month from now?\n- %^{What do you need to do this month to make sure you're on track a month from now?}\n\")
-t t t nil)
-* Overall
+t t t t)
+** Overall
 /How is your year going overall?/
 - %^{How if your year going overall?}"
   "Monthly review template in `org-capture-templates' template format.
-Can also point to file ending in .org which will be used as a template."
+Can also point to file ending in .org which will be used as a template.
+Templates should start with top level heading."
   :type 'string
   :group 'zweigtd-reviews)
 
+;; TODO weird position bugs which throw monthly templates out of whack
 (defun zweigtd-reviews--position-monthly-template ()
   "Will prompt for a year/month and create+goto a datetree for montly tree.
 To be used in org-capture-template as the position function."
@@ -465,9 +471,9 @@ NO-TASK-HEADINGS will not print the actual tasks closed."
          (when (and priority (not (eq heading zweigtd-reviews-non-goals-string))
                     (setq output
                           (concat output
-                                  "*PRIORITY:* /"
+                                  "*PRIORITY:* "
                                   (zweigtd-goals-get-prop heading :priority)
-                                  "/\n"))))
+                                  "\n"))))
          (when append
            (setq output (concat output append "\n")))))
      task-groups)
@@ -479,6 +485,7 @@ NO-TASK-HEADINGS will not print the actual tasks closed."
 Set the variable `zweigtd-reviews-bootstrap-key' to control the char key that is
 used to contain all the review entries."
   (setq org-capture-templates
+        ;; TODO duplicates anyway?
         (-uniq (-concat
                 org-capture-templates
                 `((,(string zweigtd-reviews-bootstrap-key) "Review templates")
@@ -506,7 +513,6 @@ used to contain all the review entries."
                    (function (lambda ()
                                (org-journal-new-entry nil)
                                (insert "Daily Review")))
-                   ;; TODO update templates
                    ;; TODO unnarrowed?
                    ;; TODO should be on the day specified
                    ;; TODO inbox problem? maybe ok
@@ -518,6 +524,9 @@ used to contain all the review entries."
                       zweigtd-reviews-daily-review-template)
                    :jump-to-captured t
                    :immediate-finish nil))))))
+
+;; TODO pull in completed priorities
+;; TODO quarterly and yearly templates/bootstrap
 
 (provide 'zweigtd-reviews)
 
