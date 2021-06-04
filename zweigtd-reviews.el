@@ -89,7 +89,8 @@ Dates are inclusive for ranges."
 ** Thoughts:
 /Did you accomplish enough today?/
 - %^{Did you accomplish enough today?}"
-  "Daily review template in `org-capture-templates' template format."
+  "Daily review template in `org-capture-templates' template format.
+Can also point to file ending in .org which will be used as a template."
   :type 'string
   :group 'zweigtd-reviews)
 
@@ -138,7 +139,8 @@ t t t nil)
 - %^{How are your goals coming along}
 /How do you feel about the review?/
 - %^{How do you feel about the review?}"
-  "Weekly review template in `org-capture-templates' template format."
+  "Weekly review template in `org-capture-templates' template format.
+Can also point to file ending in .org which will be used as a template."
   :type 'string
   :group 'zweigtd-reviews)
 
@@ -151,7 +153,8 @@ t t t nil)
 * Overall
 /How is your year going overall?/
 - %^{How if your year going overall?}"
-  "Monthly review template in `org-capture-templates' template format."
+  "Monthly review template in `org-capture-templates' template format.
+Can also point to file ending in .org which will be used as a template."
   :type 'string
   :group 'zweigtd-reviews)
 
@@ -466,7 +469,7 @@ NO-TASK-HEADINGS will not print the actual tasks closed."
                                   (zweigtd-goals-get-prop heading :priority)
                                   "/\n"))))
          (when append
-           (setq output (concat append "\n")))))
+           (setq output (concat output append "\n")))))
      task-groups)
     output))
 
@@ -475,7 +478,6 @@ NO-TASK-HEADINGS will not print the actual tasks closed."
   "Use this to bootstrap `org-capture' with a default set of reviews.
 Set the variable `zweigtd-reviews-bootstrap-key' to control the char key that is
 used to contain all the review entries."
-  ;; TODO doesn't keep it unique due to string interpolation
   (setq org-capture-templates
         (-uniq (-concat
                 org-capture-templates
@@ -483,14 +485,18 @@ used to contain all the review entries."
                   (,(concat (string zweigtd-reviews-bootstrap-key) "m") "Monthly Review"
                    entry
                    (file+olp+datetree ,zweigtd-reviews-file "Monthly Reviews")
-                   ,zweigtd-reviews-monthly-review-template
+                   ,(if (s-ends-with-p ".org" zweigtd-reviews-monthly-review-template)
+                        `(file ,zweigtd-reviews-monthly-review-template)
+                      zweigtd-reviews-monthly-review-template)
                    :jump-to-captured t
                    :tree-type 'monthly
                    :immediate-finish nil)
                   (,(concat (string zweigtd-reviews-bootstrap-key) "w") "Weekly Review"
                    entry
                    (file+olp+datetree ,zweigtd-reviews-file "Weekly Reviews")
-                   ,zweigtd-reviews-weekly-review-template
+                   ,(if (s-ends-with-p ".org" zweigtd-reviews-weekly-review-template)
+                        `(file ,zweigtd-reviews-weekly-review-template)
+                      zweigtd-reviews-weekly-review-template)
                    :jump-to-captured t
                    :time-prompt t
                    :tree-type 'week
@@ -500,12 +506,16 @@ used to contain all the review entries."
                    (function (lambda ()
                                (org-journal-new-entry nil)
                                (insert "Daily Review")))
+                   ;; TODO update templates
+                   ;; TODO unnarrowed?
                    ;; TODO should be on the day specified
                    ;; TODO inbox problem? maybe ok
                    ;; TODO All the rest of the entry is based on the wrong day
                    ;; TODO could probably color the individual headings
                    ;; TODO if it's cancelled, the new entry is kept
-                   ,zweigtd-reviews-daily-review-template
+                   ,(if (s-ends-with-p ".org" zweigtd-reviews-daily-review-template)
+                        `(file ,zweigtd-reviews-daily-review-template)
+                      zweigtd-reviews-daily-review-template)
                    :jump-to-captured t
                    :immediate-finish nil))))))
 
