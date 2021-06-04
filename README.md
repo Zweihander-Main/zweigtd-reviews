@@ -9,6 +9,7 @@ This is currently tightly coupled to [my config](https://github.com/Zweihander-M
 
 - `org-blank-before-new-entry`
 - `org-extend-today-until`
+- `display-buffer-alist` and `set-popup-rules!`
 
 ## Available for Hire
 
