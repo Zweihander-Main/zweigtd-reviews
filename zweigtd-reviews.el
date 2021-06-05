@@ -64,7 +64,9 @@ List in (month day year) format.")
 
 (defcustom zweigtd-reviews-bootstrap-key ?r
   "The character code that will be used as the `org-capture' menu key.
-This is used in the bootstrapped setup."
+This is used in the bootstrapped setup.
+Mixing this key with other menus isn't recommended as the bootstrap function
+may erase user specified customizations that start with this key."
   :type 'character
   :group 'zweigtd-reviews)
 
@@ -83,7 +85,7 @@ Dates are inclusive for ranges."
   :group 'zweigtd-reviews)
 
 (defcustom zweigtd-reviews-daily-review-template
-"* Daily Review --- %<%a, %D>
+  "* Daily Review --- %<%a, %D>
 ** Tasks tackled:
 %(zweigtd-reviews-genreview 'day 'none nil nil nil nil)
 ** Thoughts:
@@ -98,7 +100,7 @@ Templates should start with top level heading."
   :group 'zweigtd-reviews)
 
 (defcustom zweigtd-reviews-weekly-review-template
-"* Week %<%W, %G>
+  "* Week %<%W, %G>
 ** Admin
 *** Loose Input [0/3]
 - [ ] Gather all scraps of paper, business cards, receipts, and
@@ -147,7 +149,7 @@ Templates should start with top level heading."
   :group 'zweigtd-reviews)
 
 (defcustom zweigtd-reviews-monthly-review-template
-"* %<%B, %G>
+  "* %<%B, %G>
 ** Goal Tracking
 %(zweigtd-reviews-genreview 'month 'goal
   (concat
@@ -437,7 +439,7 @@ NO-TASK-HEADINGS will not print the actual tasks closed."
                             goal))
                     (-concat (zweigtd-goals-get-goals)
                              (unless only-goals
-                               zweigtd-reviews-non-goals-string))))
+                               (list zweigtd-reviews-non-goals-string)))))
             ((or 'day 'week 'month 'quarter 'year)
              (mapcar
               (lambda (ts-grouping)
@@ -455,10 +457,15 @@ NO-TASK-HEADINGS will not print the actual tasks closed."
               (tasks-completed (zweigtd-reviews--num-tasks tasks))
               (heading (cdr group)))
          (when heading
-           (setq output (concat output
-                                "_"
-                                heading
-                                "_\n")))
+           (setq output
+                 (concat
+                  output
+                  "_"
+                  (if (and (eq grouping 'goal)
+                           (not (s-equals-p heading zweigtd-reviews-non-goals-string)))
+                      (concat ":" heading ":")
+                    heading)
+                  "_\n")))
          (unless no-task-headings
            (setq output
                  (concat output task-headings)))
@@ -468,7 +475,7 @@ NO-TASK-HEADINGS will not print the actual tasks closed."
                          "*DONE:* "
                          (number-to-string tasks-completed)
                          "\n")))
-         (when (and priority (not (eq heading zweigtd-reviews-non-goals-string))
+         (when (and priority (not (s-equals-p heading zweigtd-reviews-non-goals-string))
                     (setq output
                           (concat output
                                   "*PRIORITY:* "
@@ -484,47 +491,52 @@ NO-TASK-HEADINGS will not print the actual tasks closed."
   "Use this to bootstrap `org-capture' with a default set of reviews.
 Set the variable `zweigtd-reviews-bootstrap-key' to control the char key that is
 used to contain all the review entries."
+  ;; Delete previous bootstraps if present
+  (when (and (member
+              `(,(string zweigtd-reviews-bootstrap-key) "Review templates")
+              org-capture-templates))
+    (setq org-capture-templates
+          (-filter (lambda (template)
+                     (not (s-starts-with-p (string zweigtd-reviews-bootstrap-key)
+                                           (car template))))
+                   org-capture-templates)))
   (setq org-capture-templates
-        ;; TODO duplicates anyway?
-        (-uniq (-concat
-                org-capture-templates
-                `((,(string zweigtd-reviews-bootstrap-key) "Review templates")
-                  (,(concat (string zweigtd-reviews-bootstrap-key) "m") "Monthly Review"
-                   entry
-                   (file+olp+datetree ,zweigtd-reviews-file "Monthly Reviews")
-                   ,(if (s-ends-with-p ".org" zweigtd-reviews-monthly-review-template)
-                        `(file ,zweigtd-reviews-monthly-review-template)
-                      zweigtd-reviews-monthly-review-template)
-                   :jump-to-captured t
-                   :tree-type 'monthly
-                   :immediate-finish nil)
-                  (,(concat (string zweigtd-reviews-bootstrap-key) "w") "Weekly Review"
-                   entry
-                   (file+olp+datetree ,zweigtd-reviews-file "Weekly Reviews")
-                   ,(if (s-ends-with-p ".org" zweigtd-reviews-weekly-review-template)
-                        `(file ,zweigtd-reviews-weekly-review-template)
-                      zweigtd-reviews-weekly-review-template)
-                   :jump-to-captured t
-                   :time-prompt t
-                   :tree-type 'week
-                   :immediate-finish nil)
-                  (,(concat (string zweigtd-reviews-bootstrap-key) "d") "Daily Review"
-                   entry
-                   (function (lambda ()
-                               (org-journal-new-entry nil)
-                               (insert "Daily Review")))
-                   ;; TODO unnarrowed?
-                   ;; TODO should be on the day specified
-                   ;; TODO inbox problem? maybe ok
-                   ;; TODO All the rest of the entry is based on the wrong day
-                   ;; TODO could probably color the individual headings
-                   ;; TODO if it's cancelled, the new entry is kept
-                   ,(if (s-ends-with-p ".org" zweigtd-reviews-daily-review-template)
-                        `(file ,zweigtd-reviews-daily-review-template)
-                      zweigtd-reviews-daily-review-template)
-                   :jump-to-captured t
-                   :immediate-finish nil))))))
+        (-concat
+         org-capture-templates
+         `((,(string zweigtd-reviews-bootstrap-key) "Review templates")
+           (,(concat (string zweigtd-reviews-bootstrap-key) "m") "Monthly Review"
+            entry
+            (file+olp+datetree ,zweigtd-reviews-file "Monthly Reviews")
+            ,(if (s-ends-with-p ".org" zweigtd-reviews-monthly-review-template)
+                 `(file ,zweigtd-reviews-monthly-review-template)
+               zweigtd-reviews-monthly-review-template)
+            :jump-to-captured t
+            :tree-type 'month
+            :immediate-finish nil)
+           (,(concat (string zweigtd-reviews-bootstrap-key) "w") "Weekly Review"
+            entry
+            (file+olp+datetree ,zweigtd-reviews-file "Weekly Reviews")
+            ,(if (s-ends-with-p ".org" zweigtd-reviews-weekly-review-template)
+                 `(file ,zweigtd-reviews-weekly-review-template)
+               zweigtd-reviews-weekly-review-template)
+            :jump-to-captured t
+            :time-prompt t
+            :tree-type 'week
+            :immediate-finish nil)
+           (,(concat (string zweigtd-reviews-bootstrap-key) "d") "Daily Review"
+            entry
+            (function (lambda ()
+                        (org-journal-new-entry nil)
+                        (insert "Daily Review")))
+            ;; TODO should be on the day specified
+            ;; TODO All the rest of the entry is based on the wrong day
+            ,(if (s-ends-with-p ".org" zweigtd-reviews-daily-review-template)
+                 `(file ,zweigtd-reviews-daily-review-template)
+               zweigtd-reviews-daily-review-template)
+            :jump-to-captured t
+            :immediate-finish nil)))))
 
+;; TODO allow more fine grain control over files polled to avoid the inbox problem
 ;; TODO pull in completed priorities
 ;; TODO quarterly and yearly templates/bootstrap
 
