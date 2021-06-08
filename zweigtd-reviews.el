@@ -98,7 +98,7 @@ outline tree name as the CDR."
    (cond (load-in-progress load-file-name)
          ((and (boundp 'byte-compile-current-file) byte-compile-current-file))
          (t (buffer-file-name))))
-  "Absolute path to zweigtd-reviews base dir")
+  "Absolute path to zweigtd-reviews base dir.")
 
 (defun zweigtd-reviews--template-path (path)
   "Expand PATH relative to `zweigtd-reviews--root-dir'.
