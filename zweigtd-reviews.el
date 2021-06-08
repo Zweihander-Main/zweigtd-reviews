@@ -635,6 +635,18 @@ used to contain all the review entries."
         (-concat
          org-capture-templates
          `((,(string zweigtd-reviews-bootstrap-key) "Review templates")
+           (,(concat (string zweigtd-reviews-bootstrap-key) "m") "Yearly Review"
+            entry
+            (function zweigtd-reviews-genposition)
+            (function (lambda () (zweigtd-reviews-gentemplate 'year)))
+            :jump-to-captured t
+            :immediate-finish nil)
+           (,(concat (string zweigtd-reviews-bootstrap-key) "m") "Quarterly Review"
+            entry
+            (function zweigtd-reviews-genposition)
+            (function (lambda () (zweigtd-reviews-gentemplate 'quarter)))
+            :jump-to-captured t
+            :immediate-finish nil)
            (,(concat (string zweigtd-reviews-bootstrap-key) "m") "Monthly Review"
             entry
             (function zweigtd-reviews-genposition)
@@ -656,7 +668,8 @@ used to contain all the review entries."
 
 ;; TODO allow more fine grain control over files polled to avoid the inbox problem
 ;; TODO pull in completed priorities
-;; TODO quarterly and yearly templates/bootstrap
+;; TODO fill in quarter for templates
+;; TODO more template elements -- percentage complete, description of goal, past remarks, longest streaks, total clocked time, pomodoros?
 
 (provide 'zweigtd-reviews)
 
