@@ -1,11 +1,9 @@
 * Week %<%W, %G>
 ** Admin
 *** Loose Input [0/3]
-- [ ] Gather all scraps of paper, business cards, receipts, and
-  miscellaneous paper. Include stuff on desk. Add to inbox.
+- [ ] Gather all scraps of paper, business cards, receipts, and miscellaneous paper. Include stuff on desk. Add to inbox.
 - [ ] Go through journal entries for trailing week and add in any loose TODOs
-- [ ] Put into inbox any new projects, action
-  items, waiting-fors, someday/maybes, etc., not yet captured.
+- [ ] Put into inbox any new projects, action items, waiting-fors, someday/maybes, etc., not yet captured.
 *** Empty Your Head [0/1]
 - [ ] Set a timer for 5 minutes and do brainstorming or mind-mapping
 *** Review Action Lists [0/1]
