@@ -93,8 +93,11 @@ outline tree name as the CDR."
                        (symbol :tag "Interval") (string :tag "Outline name")))
   :group 'zweigtd-reviews)
 
+(defvar zweigtd-reviews-root (file-name-directory load-file-name)
+  "Store the directory this package was loaded from.")
+
 (defcustom zweigtd-reviews-daily-review-template
-  (org-file-contents "templates/daily-review.org")
+  (org-file-contents (format "%sdaily-review.org" zweigtd-reviews-root))
   "Daily review template in `org-capture-templates' template format.
 Can also point to file ending in .org which will be used as a template.
 Templates should start with top level heading."
@@ -102,7 +105,7 @@ Templates should start with top level heading."
   :group 'zweigtd-reviews)
 
 (defcustom zweigtd-reviews-weekly-review-template
-  (org-file-contents "templates/weekly-review.org")
+  (org-file-contents (format "%weekly-review.org" zweigtd-reviews-root))
   "Weekly review template in `org-capture-templates' template format.
 Can also point to file ending in .org which will be used as a template.
 Templates should start with top level heading."
@@ -110,7 +113,7 @@ Templates should start with top level heading."
   :group 'zweigtd-reviews)
 
 (defcustom zweigtd-reviews-monthly-review-template
-  (org-file-contents "templates/monthly-review.org")
+  (org-file-contents (format "%monthly-review.org" zweigtd-reviews-root))
   "Monthly review template in `org-capture-templates' template format.
 Can also point to file ending in .org which will be used as a template.
 Templates should start with top level heading."
@@ -118,7 +121,7 @@ Templates should start with top level heading."
   :group 'zweigtd-reviews)
 
 (defcustom zweigtd-reviews-quarterly-review-template
-  (org-file-contents "templates/quarterly-review.org")
+  (org-file-contents (format "%quarterly-review.org" zweigtd-reviews-root))
   "Quarterly review template in `org-capture-templates' template format.
 Can also point to file ending in .org which will be used as a template.
 Templates should start with top level heading."
@@ -126,7 +129,7 @@ Templates should start with top level heading."
   :group 'zweigtd-reviews)
 
 (defcustom zweigtd-reviews-yearly-review-template
-  (org-file-contents "templates/daily-review.org")
+  (org-file-contents (format "%yearly-review.org" zweigtd-reviews-root))
   "Yearly review template in `org-capture-templates' template format.
 Can also point to file ending in .org which will be used as a template.
 Templates should start with top level heading."
