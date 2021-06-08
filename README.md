@@ -2,14 +2,32 @@
 
 > WIP
 
-This is currently tightly coupled to [my config](https://github.com/Zweihander-Main/zweidoom) -- the plan is to make it a standalone package in the future.
-
+A system for time-interval reviews using org files. Many improvements planned.
 
 ## Notes
 
-- `org-blank-before-new-entry`
-- `org-extend-today-until`
-- `display-buffer-alist` and `set-popup-rules!`
+- `org-extend-today-until` is used for all to allow for days that extend past midnight
+- `org-blank-before-new-entry` will affect some datetree generation for now, alleviate some issues with:
+``` emacs-lisp
+(setq org-blank-before-new-entry '((heading . nil)
+                                   (plain-list-item . nil))
+```
+- `display-buffer-alist` and `set-popup-rules!` will make it easier to actually see the review as you do it: 
+``` emacs-lisp
+(set-popup-rules!
+  '(("^\\*Capture\\*$\\|CAPTURE-.*$"
+     :size 1.00 ; Allow full screen for reviews
+     :quit nil
+     :select t
+     :autosave ignore)))
+```
+- Recipe:
+``` emacs-lisp
+(package! zweigtd-reviews
+  :recipe '(:host github :repo "Zweihander-Main/zweigtd-reviews"
+            :files ("zweigtd-reviews.el" "templates")))
+```
+
 
 ## Available for Hire
 
