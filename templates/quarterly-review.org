@@ -1,0 +1,11 @@
+* %<%B, %G>
+** Goal Tracking
+%(zweigtd-reviews-genreview 'goal
+  (concat
+    "What were your biggest wins? How can you repeat those or build on them? ?\n- %^{What were your biggest wins? How can you repeat those or build on them?}\n"
+    "Is what you're doing moving the needle in the ways you intended? Any side-effects, wanted or unwanted?\n- %^{Is what you're doing moving the needle in the ways you intended? Any side-effects, wanted or unwanted?}\n"
+    "What have you been ignoring? Why are you ignoring it?\n- %^{What have you been ignoring? Why are you ignoring it?}\n")
+t nil t t)
+** Overall
+/If you had a vision or theme for your year, how's that going?/
+- %^{If you have a vision or theme for your year, how's that going?}

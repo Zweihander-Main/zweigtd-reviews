@@ -1,0 +1,222 @@
+* %<%G>
+** Goal Tracking
+%(zweigtd-reviews-genreview 'goal
+  (concat
+    "Reflect on this past year.\n- %^{Reflect on this past year.}\n"
+    "Plan for next year.\n- %^{Plan for next year.}\n")
+t nil t t)
+** Overall
+*** Worldview & Purpose
+Your worldview is your complete set of beliefs about the world—its past, present, and future. It also covers your goals, values, desires and beliefs. Do you have clarity as to your existence, purpose, and place in the universe? What is your philosophy of life? What do you want to get out of life?
+- Do you have a sense of purpose and direction in life?
+- What is your philosophy of life?
+- What are your fundamental goals, beliefs, and values?
+- How do you want the world to be different when you're dead?
+- Where are you right now (both physically in the universe and temporally)?
+- What do you want out of life?
+- What is a summary of your beliefs?
+
+/Rate how this area is going overall for you: (1-10)/
+- %^{Rate how this area is going overall for you: (1-10)}
+/Reflect on this past year./
+- %^{Reflect on this past year.}
+/Envision next year./
+- %^{Envision next year.}
+*** Contribution & Impact
+How are you giving value to the world? Are you making a difference? How much impact does your existence have (environmentally, socially, cognitively)? Are you contributing to important and worthy causes?
+- How are you giving value to the world?
+- How much money did you give away in the past year? Who did it go to? Did it have the most possible impact?
+- Do you take responsibility for your environmental impact on the world?
+
+/Rate how this area is going overall for you: (1-10)/
+- %^{Rate how this area is going overall for you: (1-10)}
+/Reflect on this past year./
+- %^{Reflect on this past year.}
+/Envision next year./
+- %^{Envision next year.}
+*** Location & Possessions
+Are you tied to one location? Are you readily mobile? This includes your current living situation; where you are in the world; your home, possessions, electronics, and toys; and your material sufficiency.
+- Where do you live?
+- Where is your home?
+- Where in the world are you?
+- What is your living situation like?
+- How much stuff do you own?
+- Approximate value of all possessions?
+- What are your toys?
+- Is your life cluttered?
+
+/Rate how this area is going overall for you: (1-10)/
+- %^{Rate how this area is going overall for you: (1-10)}
+/Reflect on this past year./
+- %^{Reflect on this past year.}
+/Envision next year./
+- %^{Envision next year.}
+*** Money & Finance
+Do you have savings, investments, assets, and debt? Do you have a budget and do you follow it? Are your finances organized and managed? Where does your money come from? Where is it going?
+- Do you have savings? How much? Where are they?
+- What is the status of your assets and investments?
+- Do you know where you spend your money?
+- Do you budget?
+- What is your budget?
+- Are your finances organized?
+- Do you have any debt?
+
+/Rate how this area is going overall for you: (1-10)/
+- %^{Rate how this area is going overall for you: (1-10)}
+/Reflect on this past year./
+- %^{Reflect on this past year.}
+/Envision next year./
+- %^{Envision next year.}
+*** Career & Work
+Your work, job, career, or business; your source of income. Is what you do your calling? Are you engaged? Are you networked within your industry?
+- How do you make your money?
+- What do you do?
+- Do you like your job?
+- Are you engaged by your work?
+- Are you well networked within your industry?
+
+/Rate how this area is going overall for you: (1-10)/
+- %^{Rate how this area is going overall for you: (1-10)}
+/Reflect on this past year./
+- %^{Reflect on this past year.}
+/Envision next year./
+- %^{Envision next year.}
+*** Health & Fitness
+What do you eat? Do you exercise regularly? How often do you get sick? What is your overall energy level and resistance to illness? What are your major health issues and susceptibilities?
+- Typical foods?
+- Are you generally tired or alert?
+- How often do you get sick?
+- Do you exercise?
+- How much do you sleep on average?
+- How much do you weigh?
+- What is your standing heart rate?
+- Do you regularly eat fast food or make healthy home-cooked meals?
+- Do you research healthy foods and choices?
+- What is your source of health information?
+
+/Rate how this area is going overall for you: (1-10)/
+- %^{Rate how this area is going overall for you: (1-10)}
+/Reflect on this past year./
+- %^{Reflect on this past year.}
+/Envision next year./
+- %^{Envision next year.}
+*** Knowledge & Education
+What do you know? Are you developing your mind and learning new things? Do you have any talents or skills? Are you being educated?
+- How much time do you spend learning new things?
+- How much have you read in the past year?
+- How much education do you have?
+- What talents and skills have you recently developed?
+
+/Rate how this area is going overall for you: (1-10)/
+- %^{Rate how this area is going overall for you: (1-10)}
+/Reflect on this past year./
+- %^{Reflect on this past year.}
+/Envision next year./
+- %^{Envision next year.}
+*** Communication
+Are you spreading ideas? Do you spend time discussing, influencing, persuading, arguing, philosophizing, debating, interacting, writing, or speaking?
+- How much have you written in the past year?
+- Do you ever discuss controversial topics with others?
+- Do you ever give presentations to friends or coworkers?
+- Are you confrontational or open to discussion?
+- Do you have influence and status in your social circles? In society?
+
+/Rate how this area is going overall for you: (1-10)/
+- %^{Rate how this area is going overall for you: (1-10)}
+/Reflect on this past year./
+- %^{Reflect on this past year.}
+/Envision next year./
+- %^{Envision next year.}
+*** Intimate Relationship
+The intimate relationship(s) you have or want to have; your partner; the quality of your relationship.
+- Are you in a relationship?
+- How is it going?
+- How much do you know about the other person?
+- Are you aware of each other’s needs and desires?
+
+/Rate how this area is going overall for you: (1-10)/
+- %^{Rate how this area is going overall for you: (1-10)}
+/Reflect on this past year./
+- %^{Reflect on this past year.}
+/Envision next year./
+- %^{Envision next year.}
+*** Social Life & Family
+This covers your home life and relationships with family members; your friends and social experiences; networking; and club and organization memberships.
+- How is your home life?
+- What is your relationship like with your family?
+- How many core friends do you have?
+- How many acquaintances?
+- What clubs or organizations are you a member of?
+- Are you a good friend?
+
+/Rate how this area is going overall for you: (1-10)/
+- %^{Rate how this area is going overall for you: (1-10)}
+/Reflect on this past year./
+- %^{Reflect on this past year.}
+/Envision next year./
+- %^{Envision next year.}
+*** Emotions
+Your general feeling about life. Are you optimistic or pessimistic, positive or negative? Are you aware of your emotions as they happen?
+- How do you feel about your life?
+- Are you generally optimistic or pessimistic?
+- Are you generally positive or negative?
+- Are you easily aware of your current emotional state?
+- Are you quick to notice how your emotions are influencing your thoughts, actions, and decisions?
+- Do you do any sort of regular mindfulness practice?
+
+/Rate how this area is going overall for you: (1-10)/
+- %^{Rate how this area is going overall for you: (1-10)}
+/Reflect on this past year./
+- %^{Reflect on this past year.}
+/Envision next year./
+- %^{Envision next year.}
+*** Character & Integrity
+Your intelligence, integrity, honesty, courage, compassion, honor, self-discipline, and so on.
+- Compassion
+- Integrity
+- Empathy
+- Honor
+- Self-discipline
+- Self-awareness
+- Communication skills
+- Responsibility
+- Focus
+- Authenticity
+- Confidence
+- Persistence
+- Effectiveness
+
+/Rate how this area is going overall for you: (1-10)/
+- %^{Rate how this area is going overall for you: (1-10)}
+/Reflect on this past year./
+- %^{Reflect on this past year.}
+/Envision next year./
+- %^{Envision next year.}
+*** Productivity & Organization
+Your memorized solutions, daily routine, and schedule. How good is your productivity? Do you act effectively? Are you organized? Can you get yourself motivated? How much do you procrastinate?
+- What productivity systems do you use, if any?
+- How well are they working?
+- Is your life organized?
+- What sorts of daily routines do you have?
+- Is there too much complexity in your life? Do you need to simplify?
+
+/Rate how this area is going overall for you: (1-10)/
+- %^{Rate how this area is going overall for you: (1-10)}
+/Reflect on this past year./
+- %^{Reflect on this past year.}
+/Envision next year./
+- %^{Envision next year.}
+*** Fun & Adventure
+Are you experiencing what you want to experience? Are you enjoying life? Are you doing things for fun? Do you have any hobbies or regular recreation? Do you have any creative pursuits?
+- Are you experiencing what you want to experience in life?
+- What fun things have you done lately?
+- What creative things have you done lately?
+- What are your hobbies?
+- What do you do for recreation?
+
+/Rate how this area is going overall for you: (1-10)/
+- %^{Rate how this area is going overall for you: (1-10)}
+/Reflect on this past year./
+- %^{Reflect on this past year.}
+/Envision next year./
+- %^{Envision next year.}

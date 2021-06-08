@@ -1,0 +1,8 @@
+* Daily Review --- %<%a, %D>
+** Tasks tackled:
+%(zweigtd-reviews-genreview 'none nil nil nil nil)
+** Thoughts:
+/Did you accomplish enough today?/
+- %^{Did you accomplish enough today?}
+/Where did you waste time?/
+- %^{Where did you waste time?}

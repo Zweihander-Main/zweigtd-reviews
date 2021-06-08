@@ -94,14 +94,7 @@ outline tree name as the CDR."
   :group 'zweigtd-reviews)
 
 (defcustom zweigtd-reviews-daily-review-template
-  "* Daily Review --- %<%a, %D>
-** Tasks tackled:
-%(zweigtd-reviews-genreview 'none nil nil nil nil 'day)
-** Thoughts:
-/Did you accomplish enough today?/
-- %^{Did you accomplish enough today?}
-/Where did you waste time?/
-- %^{Where did you waste time?}"
+  (org-file-contents "templates/daily-review.org")
   "Daily review template in `org-capture-templates' template format.
 Can also point to file ending in .org which will be used as a template.
 Templates should start with top level heading."
@@ -109,48 +102,7 @@ Templates should start with top level heading."
   :group 'zweigtd-reviews)
 
 (defcustom zweigtd-reviews-weekly-review-template
-  "* Week %<%W, %G>
-** Admin
-*** Loose Input [0/3]
-- [ ] Gather all scraps of paper, business cards, receipts, and
-  miscellaneous paper. Include stuff on desk. Add to inbox.
-- [ ] Go through journal entries for trailing week and add in any loose TODOs
-- [ ] Put into inbox any new projects, action
-  items, waiting-fors, someday/maybes, etc., not yet captured.
-*** Empty Your Head [0/1]
-- [ ] Set a timer for 5 minutes and do brainstorming or mind-mapping
-*** Review Action Lists [0/1]
-- [ ] Mark off completed actions in tickler/projects/next file. Review for reminders of further action
-*** Process Your Notes [0/3]
-- [ ] Process email inbox
-- [ ] Process physical inbox
-- [ ] Process inbox file
-*** Review Waiting-For List [0/1]
-- [ ] Review WAIT and HOLD items
-*** Review Project (and Larger Outcome) Lists [0/2]
-- [ ] Review Project file, making sure one current action item is there for each
-- [ ] Review Goal file, making sure everything is up to date
-*** Review Calendar [0/4]
-- [ ] Review scheduled/logged/deadline items for last week
-- [ ] Review scheduled/logged/deadline items for next week
-- [ ] Review calendar for last week
-- [ ] Review calendar for next week
-*** Review Any Relevant Checklists [0/2]
-- [ ] Review my tickler list, add newly relevant projects to projects
-- [ ] Review projects list, remove irrelevant projects to tickler
-** Goal tracking
-%(zweigtd-reviews-genreview 'goal
-   (concat
-    \"/What did you do that worked well?/\n-  %^{What did you do that worked well?}\n\"
-    \"/What didn't work or got in the way?/\n-  %^{What didn't work or got in the way?}\n\"
-    \"/Should you do anything differently?/\n-  %^{Should you do anything differently?}\n\"
-    \"/What are your priorities for the upcoming week?/\n-  %^{What are you priorities for the upcoming week?}\n\")
-t t t nil 'week)
-** Overall
-/How are your goals coming along?/
-- %^{How are your goals coming along}
-/How do you feel about the review?/
-- %^{How do you feel about the review?}"
+  (org-file-contents "templates/weekly-review.org")
   "Weekly review template in `org-capture-templates' template format.
 Can also point to file ending in .org which will be used as a template.
 Templates should start with top level heading."
@@ -158,16 +110,7 @@ Templates should start with top level heading."
   :group 'zweigtd-reviews)
 
 (defcustom zweigtd-reviews-monthly-review-template
-  "* %<%B, %G>
-** Goal Tracking
-%(zweigtd-reviews-genreview 'goal
-  (concat
-    \"How are you doing relative to your plan for this goal?\n- %^{How are you doing relative to your plan for this goal?}\n\"
-    \"What do you need to do this month to make sure you're on track a month from now?\n- %^{What do you need to do this month to make sure you're on track a month from now?}\n\")
-t t t t 'month)
-** Overall
-/How is your year going overall?/
-- %^{How if your year going overall?}"
+  (org-file-contents "templates/monthly-review.org")
   "Monthly review template in `org-capture-templates' template format.
 Can also point to file ending in .org which will be used as a template.
 Templates should start with top level heading."
@@ -175,16 +118,7 @@ Templates should start with top level heading."
   :group 'zweigtd-reviews)
 
 (defcustom zweigtd-reviews-quarterly-review-template
-  "* %<%q, %G>
-** Goal Tracking
-%(zweigtd-reviews-genreview 'goal
-  (concat
-    \"How are you doing relative to your plan for this goal?\n- %^{How are you doing relative to your plan for this goal?}\n\"
-    \"What do you need to do this month to make sure you're on track a month from now?\n- %^{What do you need to do this month to make sure you're on track a month from now?}\n\")
-t t t t 'quarter)
-** Overall
-/How is your year going overall?/
-- %^{How if your year going overall?}"
+  (org-file-contents "templates/quarterly-review.org")
   "Quarterly review template in `org-capture-templates' template format.
 Can also point to file ending in .org which will be used as a template.
 Templates should start with top level heading."
@@ -192,16 +126,7 @@ Templates should start with top level heading."
   :group 'zweigtd-reviews)
 
 (defcustom zweigtd-reviews-yearly-review-template
-  "* %<%Y>
-** Goal Tracking
-%(zweigtd-reviews-genreview 'goal
-  (concat
-    \"How are you doing relative to your plan for this goal?\n- %^{How are you doing relative to your plan for this goal?}\n\"
-    \"What do you need to do this month to make sure you're on track a month from now?\n- %^{What do you need to do this month to make sure you're on track a month from now?}\n\")
-t t t t 'year)
-** Overall
-/How is your year going overall?/
-- %^{How if your year going overall?}"
+  (org-file-contents "templates/daily-review.org")
   "Yearly review template in `org-capture-templates' template format.
 Can also point to file ending in .org which will be used as a template.
 Templates should start with top level heading."
@@ -576,7 +501,7 @@ corresponding tree for the other INTERVAL values."
       ('day (when file (org-datetree-find-date-create org-datetree-date
                                                       'subtree-at-point)))
       ('week (org-datetree-find-month-create org-datetree-date
-                                                'subtree-at-point)))
+                                             'subtree-at-point)))
     (setq zweigtd-reviews--internal-plist nil)))
 
 ;;;###autoload

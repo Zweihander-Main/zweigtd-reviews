@@ -3,7 +3,7 @@
 
 (package-file "zweigtd-reviews.el")
 
-(files "process-org-agenda-inbox-test.el")
+(files "zweigtd-reviews.el" "templates/*.org")
 
 (depends-on "org")
 (depends-on "org-ql")

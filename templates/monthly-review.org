@@ -1,0 +1,10 @@
+* %<%B, %G>
+** Goal Tracking
+%(zweigtd-reviews-genreview 'goal
+  (concat
+    "How are you doing relative to your plan for this goal?\n- %^{How are you doing relative to your plan for this goal?}\n"
+    "What do you need to do this month to make sure you're on track a month from now?\n- %^{What do you need to do this month to make sure you're on track a month from now?}\n")
+t t t t)
+** Overall
+/How is your year going overall?/
+- %^{How if your year going overall?}
