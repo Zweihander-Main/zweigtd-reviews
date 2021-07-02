@@ -573,13 +573,13 @@ used to contain all the review entries."
         (-concat
          org-capture-templates
          `((,(string zweigtd-reviews-bootstrap-key) "Review templates")
-           (,(concat (string zweigtd-reviews-bootstrap-key) "m") "Yearly Review"
+           (,(concat (string zweigtd-reviews-bootstrap-key) "y") "Yearly Review"
             entry
             (function zweigtd-reviews-genposition)
             (function (lambda () (zweigtd-reviews-gentemplate 'year)))
             :jump-to-captured t
             :immediate-finish nil)
-           (,(concat (string zweigtd-reviews-bootstrap-key) "m") "Quarterly Review"
+           (,(concat (string zweigtd-reviews-bootstrap-key) "q") "Quarterly Review"
             entry
             (function zweigtd-reviews-genposition)
             (function (lambda () (zweigtd-reviews-gentemplate 'quarter)))
