@@ -6,7 +6,7 @@
 ;; Keywords: outlines
 ;; Homepage: https://github.com/Zweihander-Main/zweigtd-reviews
 ;; Version: 0.0.1
-;; Package-Requires: ((emacs "27.2"))
+;; Package-Requires: ((emacs "27.2") (ts "0.3.6") (org-ql "0.6.0") (dash "2.18.1") (zweigtd-goals "0.0.1"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -147,7 +147,7 @@ Templates should start with top level heading."
   :group 'zweigtd-reviews)
 
 (defun zweigtd-reviews--prompt-day ()
-  "Prompts user for day and return start/end ts cons cell."
+  "Prompt user for day and return start/end ts cons cell."
   (let* ((input (ts-parse-org
                  (org-read-date nil
                                 nil
@@ -165,7 +165,7 @@ Templates should start with top level heading."
     (cons start end)))
 
 (defun zweigtd-reviews--prompt-week ()
-  "Prompts user for ISO week (start Mon) and return start/end ts cons cell."
+  "Prompt user for ISO week (start Mon) and return start/end ts cons cell."
   (let* ((now (ts-apply :hour org-extend-today-until
                         :minute 0
                         :second 0
@@ -198,7 +198,7 @@ Templates should start with top level heading."
                 collection))))
 
 (defun zweigtd-reviews--prompt-month ()
-  "Prompts user for month and return start/end ts cons cell."
+  "Prompt user for month and return start/end ts cons cell."
   (let* ((input-list (calendar-read-date t))
          (year (nth 2 input-list))
          (month (nth 0 input-list))
@@ -233,7 +233,7 @@ Templates should start with top level heading."
     (cons q-start q-end)))
 
 (defun zweigtd-reviews--prompt-quarter ()
-  "Prompts user for quarter and return start/end ts cons cell."
+  "Prompt user for quarter and return start/end ts cons cell."
   (let* ((now (ts-apply :hour org-extend-today-until
                         :minute 0
                         :second 0
@@ -269,7 +269,7 @@ Templates should start with top level heading."
                 collection))))
 
 (defun zweigtd-reviews--prompt-year ()
-  "Prompts user for year and return start/end ts cons cell."
+  "Prompt user for year and return start/end ts cons cell."
   (let* ((year (calendar-read
                 "Year (>0): "
                 (lambda (x) (> x 1900))
