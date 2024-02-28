@@ -1,6 +1,6 @@
 ;;; zweigtd-reviews.el --- WIP-*-lexical-binding:t-*-
 
-;; Copyright (C) 2021, Zweihänder <zweidev@zweihander.me>
+;; Copyright (C) 2021-2024, Zweihänder <zweidev@zweihander.me>
 ;;
 ;; Author: Zweihänder
 ;; Keywords: outlines
