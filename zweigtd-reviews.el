@@ -289,7 +289,7 @@ Templates should start with top level heading."
   "Figure out which dates user wants over INTERVAL and return TS-CONS cell.
 TS-CONS cell can be used for `zweigtd-reviews--get-tasks'.
 
-INTERVAL represents the horizon being queried. See `zweigtd-reviews-genreview'.
+INTERVAL represents the horizon being queried - see `zweigtd-reviews-genreview'.
 
 Returned time will take into account `org-extend-today-until' variable."
   (let ((ts-cons
@@ -307,7 +307,7 @@ Returned time will take into account `org-extend-today-until' variable."
   "Return tasks accomplished DATA-TO-QUERY over TS-CONS interval.
 
 TS-CONS should be a cons cell with car set to the start of the date interval to
-query and cdr set to the end of the date interval. The values can be anything
+query and cdr set to the end of the date interval.  The values can be anything
 accepted by the `:from' and `:to' arguments fed into `org-ql' time predicates.
 This includes number of days (positive to look forward, negative to look
 backward), a `ts' struct (recommended), or a string parseable by
@@ -377,7 +377,7 @@ GROUPING decides how the data will be grouped and can be one of the following:
   `year'
   `none'
 
-APPEND is a string that will be appended to each grouping. For example, this can
+APPEND is a string that will be appended to each grouping.  For ex, this can
 be used to add a string after each goal group asking questions relevant to that
 goal.
 
@@ -481,7 +481,7 @@ INTERVAL represents the horizon being queried and can be one of the following:
   `quarter'
   `year'
 
-Optional FILE is the file this will be filed to. This will default to the
+Optional FILE is the file this will be filed to.  This will default to the
 journal entry for the user-selected day for INTERVAL `day' and to the
 corresponding tree for the other INTERVAL values."
   (catch 'break
@@ -521,7 +521,7 @@ corresponding tree for the other INTERVAL values."
 (defun zweigtd-reviews-gentemplate (interval &optional template)
   "Will generate a template prefilled with the user-selected INTERVAL.
 
-Confusingly, this comes BEFORE `zweigtd-reviews-genposition'. Therefore,
+Confusingly, this comes BEFORE `zweigtd-reviews-genposition'.  Therefore,
 INTERVAL is mandatory as it won't have been set prior to this.
 
 INTERVAL represents the horizon being queried and can be one of the following:
