@@ -3,3 +3,4 @@
 (eldev-require-version "1.2")
 (eldev-use-package-archive 'melpa)
 (eldev-add-extra-dependencies 'test 'org)
+(eldev-use-local-dependency "../zweigtd-goals")
