@@ -6,7 +6,7 @@
 ;; Keywords: outlines
 ;; Homepage: https://github.com/Zweihander-Main/zweigtd-reviews
 ;; Version: 0.0.1
-;; Package-Requires: ((emacs "27.2") (ts "0.3.6") (org-ql "0.6.0") (dash "2.18.1") (zweigtd-goals "0.0.1"))
+;; Package-Requires: ((emacs "28.1") (ts "0.3.6") (org-ql "0.8.5") (dash "2.19.1") (zweigtd-goals "0.0.1"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -270,7 +270,7 @@ Templates should start with top level heading."
 
 (defun zweigtd-reviews--prompt-year ()
   "Prompt user for year and return start/end ts cons cell."
-  (let* ((year (calendar-read
+  (let* ((year (calendar-read-sexp
                 "Year (>0): "
                 (lambda (x) (> x 1900))
                 (number-to-string (calendar-extract-year
